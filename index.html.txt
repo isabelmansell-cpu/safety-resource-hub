@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SafePath</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#fdf8f5;color:#3a2f2a;overflow-x:hidden}
+
+nav{position:fixed;top:0;width:100%;z-index:999;padding:16px 48px;display:flex;justify-content:space-between;align-items:center;background:rgba(253,248,245,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(180,150,140,0.15)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:20px;color:#8b5e52;letter-spacing:0.04em}
+.nav-links{display:flex;gap:28px}
+.nav-links a{text-decoration:none;font-size:13px;font-weight:400;color:#7a6860;letter-spacing:0.06em;text-transform:uppercase;transition:color 0.3s}
+.nav-links a:hover{color:#c08b7c}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%, rgba(210,180,170,0.22) 0%, transparent 60%),radial-gradient(ellipse at 80% 20%, rgba(180,200,170,0.18) 0%, transparent 55%);pointer-events:none}
+.hero-inner{max-width:720px;text-align:center}
+.hero-eyebrow{font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#b08070;margin-bottom:28px;opacity:0;animation:fadeUp 1s 0.2s forwards}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(48px,7vw,88px);line-height:1.08;font-weight:600;color:#3a2f2a;margin-bottom:28px;opacity:0;animation:fadeUp 1s 0.4s forwards}
+.hero h1 em{font-style:italic;color:#c08b7c}
+.hero-sub{font-size:17px;line-height:1.85;color:#7a6860;max-width:540px;margin:0 auto 44px;opacity:0;animation:fadeUp 1s 0.6s forwards}
+.hero-cta{display:inline-block;padding:14px 36px;background:#c08b7c;color:#fff;text-decoration:none;border-radius:40px;font-size:14px;letter-spacing:0.06em;opacity:0;animation:fadeUp 1s 0.8s forwards;transition:background 0.3s,transform 0.3s}
+.hero-cta:hover{background:#a8705f;transform:translateY(-2px)}
+.scroll-line{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp 1s 1.2s forwards}
+.scroll-line span{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#b08070}
+.scroll-line-bar{width:1px;height:48px;background:linear-gradient(to bottom,#c08b7c,transparent);animation:scrollPulse 2s infinite}
+
+section.content-section{padding:120px 48px;max-width:1100px;margin:0 auto}
+.section-inner{opacity:0;transform:translateY(40px);transition:opacity 0.9s ease,transform 0.9s ease}
+.section-inner.visible{opacity:1;transform:translateY(0)}
+
+.section-tag{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#c08b7c;margin-bottom:20px;display:block}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,46px);font-weight:600;line-height:1.2;margin-bottom:32px;color:#3a2f2a}
+.section-title em{font-style:italic;color:#8b7060}
+
+.prose p{font-size:16px;line-height:1.95;color:#5a4840;margin-bottom:24px}
+.prose p:last-child{margin-bottom:0}
+
+.divider{width:48px;height:2px;background:#d4a898;margin:48px 0}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.two-col.reverse{direction:rtl}
+.two-col.reverse > *{direction:ltr}
+
+.img-block{border-radius:20px;overflow:hidden;position:relative}
+.img-block img{width:100%;display:block;filter:saturate(0.85)}
+.img-caption{font-size:12px;color:#b08070;margin-top:10px;font-style:italic;text-align:center}
+
+.pull-quote{border-left:2px solid #d4a898;padding:24px 32px;margin:40px 0;background:rgba(212,168,152,0.08);border-radius:0 12px 12px 0}
+.pull-quote p{font-family:'Playfair Display',serif;font-size:19px;line-height:1.7;font-style:italic;color:#7a5548;margin:0}
+
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:40px}
+.resource-card{background:#fff;border-radius:16px;padding:28px;border:1px solid rgba(180,150,140,0.2);transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden}
+.resource-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c08b7c,#d4a898)}
+.resource-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(150,100,80,0.12)}
+.resource-card h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:#3a2f2a;margin-bottom:10px}
+.resource-card p{font-size:14px;line-height:1.7;color:#7a6860;margin-bottom:16px}
+.resource-card a{font-size:13px;color:#c08b7c;text-decoration:none;letter-spacing:0.04em;font-weight:500;border-bottom:1px solid #d4a898;padding-bottom:2px;transition:color 0.3s}
+.resource-card a:hover{color:#a8705f}
+
+.warning-list{margin-top:32px;display:flex;flex-direction:column;gap:20px}
+.warning-item{display:flex;gap:20px;align-items:flex-start;padding:24px;background:#fff;border-radius:14px;border:1px solid rgba(180,150,140,0.18)}
+.warning-dot{width:10px;height:10px;border-radius:50%;background:#c08b7c;flex-shrink:0;margin-top:6px}
+.warning-item p{font-size:15px;line-height:1.8;color:#5a4840;margin:0}
+
+footer{padding:60px 48px;text-align:center;border-top:1px solid rgba(180,150,140,0.2)}
+footer p{font-size:13px;color:#b08070;line-height:1.8}
+footer a{color:#c08b7c;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scrollPulse{0%,100%{opacity:0.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.1)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">SafePath</span>
+  <div class="nav-links">
+    <a href="#why">Why</a>
+    <a href="#signs">Spotting Signs</a>
+    <a href="#online">Online Safety</a>
+    <a href="#howtohelp">How to Help</a>
+    <a href="#resources">Resources</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">A child protection awareness resource</p>
+    <h1>Children need adults who <em>notice.</em></h1>
+    <p class="hero-sub">SafePath is a resource for parents, caregivers, teachers, and anyone who works with or loves children. It exists to help you recognize the signs of abuse, understand how to respond, and know exactly where to turn when a child in your life needs protection.</p>
+    <a href="#why" class="hero-cta">Start reading</a>
+  </div>
+  <div class="scroll-line">
+    <span>scroll</span>
+    <div class="scroll-line-bar"></div>
+  </div>
+</div>
+
+<section class="content-section" id="why">
+  <div class="section-inner">
+    <span class="section-tag">Why this exists</span>
+    <h2 class="section-title">Most adults want to help. They just don't know <em>what to look for.</em></h2>
+    <div class="divider"></div>
+    <div class="two-col">
+      <div class="prose">
+        <p>Child abuse is one of those topics that people know is serious, but rarely feel equipped to actually address. It gets talked about in broad, alarming terms without much practical guidance on what it actually looks like in real life, or what an ordinary adult is supposed to do when they suspect something is wrong. That gap between awareness and action is where children fall through.</p>
+        <p>The reality is that most abuse is not discovered by investigators or professionals. It is discovered by people who were already in a child's life. A teacher who noticed a change in a student's behavior. A neighbor who observed something that didn't sit right. A family friend who asked a question nobody else was willing to ask. Everyday adults, paying attention, are the first and most important line of protection a child has.</p>
+        <p>SafePath was created to give those adults the information they need. Not a clinical manual, and not a fear-based lecture, but a clear and honest breakdown of what warning signs look like, how abuse tends to operate, what appropriate and inappropriate adult behavior around children looks like, and what steps you can actually take if you believe a child is being harmed. The information here is written for anyone who cares about the children in their community, whether you are a parent, a teacher, a coach, an aunt, a neighbor, or simply someone who believes that protecting children is a shared responsibility.</p>
+        <div class="pull-quote">
+          <p>"You do not need to be certain that abuse is happening to take action. Suspicion alone is enough to make a call."</p>
+        </div>
+        <p>One of the most common reasons adults hesitate to report suspected abuse is the fear of being wrong. They worry about damaging a family's reputation, about overreacting, or about what happens if they report and nothing comes of it. What is important to understand is that reporting is not the same as accusing. It is simply handing the concern to someone who is trained to investigate it. You are not the judge. You are the person who made sure someone looked.</p>
+      </div>
+      <div>
+        <div class="img-block">
+          <!--
+            PHOTO 1 - "Why this exists" section
+            Recommended: A warm, soft image of an adult with a child, or an adult in a caring setting.
+            Good Unsplash search terms: "adult child warm light", "caregiver child soft", "parent child natural light"
+            To use your own photo: replace the src below with your image filename, e.g. src="photo1.jpg"
+            Make sure the image file is in the same folder as this HTML file on GitHub.
+          -->
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="warm natural light, people sitting together" loading="lazy"/>
+        </div>
+        <p class="img-caption">The adults in a child's life are their first layer of protection.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="signs">
+  <div class="section-inner">
+    <span class="section-tag">What to watch for</span>
+    <h2 class="section-title">Warning signs are rarely <em>obvious.</em></h2>
+    <div class="divider"></div>
+    <div class="prose">
+      <p>Abuse does not always leave visible marks. Physical signs, when they exist, are often explained away or hidden. What adults are more likely to notice are changes in a child's behavior, emotional state, or relationships, and those changes are just as significant as anything physical. Learning to recognize them is one of the most important things you can do for the children in your life.</p>
+      <p>No single sign listed here is proof of abuse on its own. Children go through difficult periods for all kinds of reasons. What matters is pattern and context. If you are seeing multiple signs at once, or if a child's behavior has shifted in ways that feel unexplained and persistent, that is worth taking seriously. Trust your instincts. Adults who work closely with children often describe a feeling that something was off long before they had words for it. That feeling matters.</p>
+    </div>
+
+    <div class="warning-list">
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Unexplained physical injuries or inconsistent explanations.</strong> Bruises, burns, welts, or injuries that don't match the explanation given, that appear in unusual locations, or that show up repeatedly are significant warning signs of physical abuse. Children with unexplained injuries may seem fearful or reluctant to discuss how they were hurt, or may give answers that change over time.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Sudden or dramatic changes in behavior or mood.</strong> A child who was once outgoing and now withdraws, a child who becomes aggressive or defiant after a period of calm, or a child who develops new fears, nightmares, or anxiety without a clear cause may be responding to something difficult happening in their life. These shifts are the child's way of communicating that something is wrong, even when they cannot say it directly.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Sexual knowledge or behavior that is not appropriate for their age.</strong> When a young child uses explicit sexual language, acts out sexual scenarios during play, or demonstrates an understanding of sexual acts that they would not ordinarily have access to, this is one of the most significant indicators of sexual abuse and warrants immediate attention from a trained professional.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Regression to earlier behaviors.</strong> Bedwetting in a child who was previously toilet trained, thumb sucking in an older child, excessive clinginess, or a sudden loss of skills they had already developed can all indicate that a child is under significant stress or has experienced something traumatic.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Fear or avoidance of specific people, places, or situations.</strong> Pay attention when a child becomes visibly distressed about going somewhere they used to go without issue, or when they express fear or reluctance around a specific adult. Children are not always able to explain why they feel unsafe, but their body language and emotional responses around certain people or environments often tell you what their words cannot.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Signs of neglect, including poor hygiene, hunger, or inadequate clothing.</strong> Neglect is the most commonly reported form of child maltreatment, and it can be just as damaging as physical or sexual abuse. A child who is consistently unwashed, underfed, dressed inappropriately for the weather, or who reports that no one is home to care for them is showing signs that their basic needs are not being met.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Disclosures, even partial or indirect ones.</strong> Sometimes children will test the waters by mentioning something troubling in a casual or roundabout way. They may say something and then immediately take it back. They may ask a hypothetical question that is not actually hypothetical. If a child says something that sounds like the beginning of a disclosure, the most important thing you can do is stay calm, listen without pressing them for details, and let them know they are not in trouble. Then seek guidance from a professional on next steps.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="online">
+  <div class="section-inner">
+    <span class="section-tag">The digital landscape</span>
+    <h2 class="section-title">Online abuse is just as real, and often <em>harder to see.</em></h2>
+    <div class="divider"></div>
+    <div class="two-col reverse">
+      <div class="prose">
+        <p>For many children today, online spaces are where they spend a significant portion of their social lives. This is not inherently dangerous, but it does create environments where adults who intend to harm children can operate with a level of access and anonymity that did not exist a generation ago. Understanding how online abuse and grooming work is now a fundamental part of keeping children safe.</p>
+        <p>Online grooming is the process by which an adult deliberately builds a relationship of trust and emotional connection with a child in order to manipulate and ultimately abuse them. It rarely looks threatening from the outside. Groomers present themselves as unusually understanding, attentive, and supportive. They pay close attention to what the child shares about their interests, insecurities, and home life, and they use that information to position themselves as someone the child genuinely needs. Over time, they introduce inappropriate content, request photos, encourage secrecy, and work to separate the child from the trusted adults in their life.</p>
+        <div class="pull-quote">
+          <p>"Groomers do not target children randomly. They look for vulnerability, and they are skilled at finding it."</p>
+        </div>
+        <p>As a caregiver or trusted adult, there are specific behaviors worth monitoring. A child who becomes secretive or defensive about their device, who minimizes their screen or closes tabs when an adult approaches, who is receiving gifts or money from someone online that you don't know, or who seems emotionally invested in an online relationship with someone significantly older may be in contact with someone who means them harm. These are not signs to panic over in isolation, but they are signs to take seriously and address with an open, non-accusatory conversation.</p>
+        <p>It is also worth understanding what appropriate adult behavior looks like online, so you can recognize when it crosses a line. Adults who work with children in professional or community settings should not be communicating with those children privately on personal accounts, outside of official channels, or late at night. They should not be asking children to keep their communication secret, sending personal photos, or engaging in conversations that would make a parent uncomfortable if they read them. These boundaries exist for good reason, and any adult who consistently pushes against them around a child deserves a closer look.</p>
+        <p>Having ongoing, calm conversations with children about their online lives is one of the most protective things you can do. Not interrogations, and not lectures, but genuine curiosity. Knowing who they talk to, what platforms they use, and how those interactions make them feel creates a foundation of openness that makes it much more likely a child will come to you if something goes wrong.</p>
+      </div>
+      <div>
+        <div class="img-block">
+          <!--
+            PHOTO 2 - "Online Safety" section
+            Recommended: A soft image of an adult and child together, perhaps looking at something, in warm natural light. Avoid colorful or tech-heavy images.
+            Good Unsplash search terms: "adult child talking soft light", "parent child sitting warm", "caregiver child calm"
+            To use your own photo: replace the src below with your image filename, e.g. src="photo2.jpg"
+            Make sure the image file is in the same folder as this HTML file on GitHub.
+          -->
+          <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&q=80" alt="adult and child sitting together in warm light" loading="lazy"/>
+        </div>
+        <p class="img-caption">Open, regular conversations about online life create safety before it's needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="howtohelp">
+  <div class="section-inner">
+    <span class="section-tag">Taking action</span>
+    <h2 class="section-title">What to do when you think a child <em>needs help.</em></h2>
+    <div class="divider"></div>
+    <div class="prose">
+      <p>If you have noticed warning signs in a child, or if a child has said something that concerns you, the most important thing you can do is act on that concern rather than wait for more certainty. Adults who look back on situations where a child was harmed often describe a period of hesitation where they talked themselves out of reporting. They wondered if they were overreacting. They gave the benefit of the doubt to the adults involved. They waited to see if things improved. In almost every case, they wish they had acted sooner.</p>
+      <p>You are not required to have evidence. You are not required to investigate. Your job is simply to report your concern to someone who is trained to take it from there. Here is what that process looks like in practice.</p>
+    </div>
+
+    <div class="warning-list" style="margin-top:0">
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>If a child discloses abuse to you, listen without pressing for details.</strong> It is natural to want to ask follow-up questions, but doing so can actually complicate a later investigation and may cause the child to shut down. Let them share what they're comfortable sharing, reassure them that they did the right thing by telling you, and make clear that they are not in trouble. Do not promise to keep it a secret. Tell them you are going to make sure they are safe, and then follow through.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Report your concern to the appropriate authority.</strong> In Texas, this means calling the Texas Abuse Hotline at 1-800-252-5400, which is available 24 hours a day. Reports can be made anonymously. You do not need to know for certain that abuse is occurring. If you have reasonable cause to believe a child may be in danger, that is enough. In Texas, certain professionals including teachers, doctors, and coaches are legally required to report suspected abuse, but any person can and should make a report if they have concerns.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Do not confront the person you suspect of causing harm.</strong> This is a difficult instinct to resist, especially if the person is someone you know. But confronting a suspected abuser can put the child at greater risk, give the abuser time to prepare a defense or destroy evidence, and complicate the investigation. The most protective thing you can do is report to authorities and let trained investigators take it from there.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Continue to be a consistent, safe presence for the child.</strong> Children who have experienced abuse need stability. They need to know that at least one adult in their life is reliable, calm, and not going anywhere. You do not need to have all the answers or know how to talk about what happened. Simply showing up, maintaining your normal relationship with the child, and making it clear through your actions that they are safe with you is profoundly valuable.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Take care of yourself in this process too.</strong> Learning that a child you care about has been harmed is genuinely difficult. It is appropriate to seek your own support, whether that looks like talking to a counselor, reaching out to a victim advocacy organization, or simply leaning on people you trust. Protecting a child through a situation like this takes emotional energy, and that energy needs to be replenished.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:40px">
+      <p>If a child is in immediate danger, call 911. Do not wait, do not attempt to remove the child yourself unless you are their parent or guardian, and do not let worry about the outcome stop you from making the call. A child's safety comes before anyone's comfort, including your own.</p>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="resources">
+  <div class="section-inner">
+    <span class="section-tag">Texas & Houston resources</span>
+    <h2 class="section-title">Where to turn <em>right now.</em></h2>
+    <div class="divider"></div>
+    <div class="prose">
+      <p>Every organization listed here is staffed by people who have dedicated their work to child protection. Whether you need to make a report, find support services for a child you love, or simply talk through a situation with someone who knows the system, these resources exist for exactly that purpose. All of them are either free, confidential, or both.</p>
+    </div>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <h3>Texas Abuse Hotline (DFPS)</h3>
+        <p>The official Texas Department of Family and Protective Services reporting line for child abuse and neglect. Available 24 hours a day, 7 days a week. Reports can be made anonymously. This is the first call to make if you suspect a child in Texas is being abused or neglected.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">1-800-252-5400</p>
+        <a href="https://www.txabusehotline.org" target="_blank" rel="noopener">txabusehotline.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Childhelp National Child Abuse Hotline</h3>
+        <p>A 24/7 confidential crisis line staffed by professional counselors who specialize in child abuse. Available by call, text, or online chat in over 170 languages. Useful for caregivers and adults who need guidance on what to do when they suspect a child is being harmed.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">1-800-422-4453</p>
+        <a href="https://www.childhelp.org/hotline" target="_blank" rel="noopener">childhelp.org/hotline</a>
+      </div>
+      <div class="resource-card">
+        <h3>The Children's Assessment Center (Houston)</h3>
+        <p>Houston's primary child abuse assessment center, offering forensic interviews, medical evaluations, mental health services, and family support all in one child-centered location. Families are referred here after a report has been made to DFPS or law enforcement. No cost to families.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">713-986-3300</p>
+        <a href="https://www.cachouston.org" target="_blank" rel="noopener">cachouston.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Child Advocates of Houston</h3>
+        <p>Trains and supervises volunteer advocates who represent the best interests of abused and neglected children in the Texas court system. Also provides community education programs for adults who want to better understand child protection in their area.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">713-529-9165</p>
+        <a href="https://www.childadvocates.org" target="_blank" rel="noopener">childadvocates.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Houston Area Women's Center</h3>
+        <p>Provides crisis intervention, counseling, and advocacy for survivors of sexual assault and domestic violence, including children. Their 24-hour hotline connects callers with trained advocates who can help navigate next steps for both child victims and the adults supporting them.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">713-528-7273 (24hr hotline)</p>
+        <a href="https://www.hawc.org" target="_blank" rel="noopener">hawc.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>RAINN</h3>
+        <p>The nation's largest anti-sexual violence organization. Provides a confidential 24/7 hotline and online chat for survivors and the people supporting them. Particularly useful for adults helping a child who has disclosed sexual abuse and who need guidance on what to do and what to expect.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">1-800-656-4673</p>
+        <a href="https://www.rainn.org/get-help" target="_blank" rel="noopener">rainn.org/get-help</a>
+      </div>
+      <div class="resource-card">
+        <h3>Darkness to Light</h3>
+        <p>A national nonprofit focused on empowering adults to prevent child sexual abuse. Their Stewards of Children training is one of the most widely used child protection programs in the country and is available online. Highly recommended for anyone who works with children in any capacity.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">darknesstolighttraining.org</p>
+        <a href="https://www.d2l.org/education/stewards-of-children" target="_blank" rel="noopener">d2l.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Internet Crimes Against Children (ICAC)</h3>
+        <p>A national network of law enforcement task forces, including one based in Texas, that investigates online exploitation and digital abuse of minors. If you believe a child has been targeted, solicited, or exploited online, this is where to report it.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">cybertipline.org</p>
+        <a href="https://www.missingkids.org/gethelpnow/cybertipline" target="_blank" rel="noopener">Report online exploitation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:#8b5e52;margin-bottom:16px">SafePath</p>
+  <p>An educational awareness resource for adults who want to protect the children in their lives.<br>Not a substitute for professional services, but a place to start.</p>
+  <p style="margin-top:16px;font-size:12px;opacity:0.7">If a child is in immediate danger, call <strong>911</strong>.</p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+},{threshold:0.1});
+document.querySelectorAll('.section-inner').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
