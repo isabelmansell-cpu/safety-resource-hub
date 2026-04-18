@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafePath Resource Hub</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #faf7f5;
+    color: #2b2b2b;
+    scroll-behavior: smooth;
+  }
+
+  /* top nav */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    padding: 10px;
+    font-size: 13px;
+    z-index: 1000;
+  }
+
+  nav a {
+    text-decoration: none;
+    color: #444;
+  }
+
+  /* sections */
+  section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 90px 20px;
+  }
+
+  .card {
+    max-width: 800px;
+    background: white;
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+
+  h1, h2 {
+    margin-top: 0;
+    color: #2f3e46;
+  }
+
+  p {
+    line-height: 1.6;
+    color: #444;
+  }
+
+  .tagline {
+    color: #7a6f6a;
+    font-size: 14px;
+    margin-top: -10px;
+  }
+
+  .grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .box {
+    background: #f6f1ee;
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 14px;
+    margin-top: 15px;
+  }
+
+  .small {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .highlight {
+    color: #b07b6b;
+    font-weight: bold;
+  }
+</style>
+</head>
+
+<body>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#why">Why</a>
+  <a href="#signs">Signs</a>
+  <a href="#digital">Digital Safety</a>
+  <a href="#help">What To Do</a>
+  <a href="#resources">Resources</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <div class="card">
+    <h1>SafePath Resource Hub</h1>
+    <p class="tagline">A calm, supportive space for awareness, safety education, and trusted help resources.</p>
+
+    <p>
+      This site exists to make safety information easier to understand, especially for teens and young adults.
+      It focuses on awareness, digital safety, and where to find support if something ever feels wrong.
+    </p>
+
+    <img src="https://source.unsplash.com/900x500/?soft,nature,light" alt="calm image">
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="card">
+    <h2>Why this exists</h2>
+    <p>
+      A lot of safety information online is either too intense or too vague. This site is designed to be clear,
+      calm, and easy to understand without overwhelming anyone.
+    </p>
+
+    <div class="box">
+      <p>✔ Awareness without fear</p>
+      <p>✔ Simple, practical signs to notice</p>
+      <p>✔ Trusted Texas + Houston resources</p>
+    </div>
+  </div>
+</section>
+
+<!-- WARNING SIGNS -->
+<section id="signs">
+  <div class="card">
+    <h2>Warning Signs to Be Aware Of</h2>
+
+    <div class="grid">
+      <div class="box">
+        <span class="highlight">Emotional changes</span>
+        <p>Withdrawal, anxiety, sudden mood shifts, or fearfulness around certain people.</p>
+      </div>
+
+      <div class="box">
+        <span class="highlight">Behavior changes</span>
+        <p>Loss of interest in activities, avoiding home or specific environments, or secrecy.</p>
+      </div>
+
+      <div class="box">
+        <span class="highlight">Social changes</span>
+        <p>Isolation, declining school performance, or changes in friendships.</p>
+      </div>
+    </div>
+
+    <img src="https://source.unsplash.com/900x500/?student,reflection" alt="student reflection">
+  </div>
+</section>
+
+<!-- DIGITAL SAFETY -->
+<section id="digital">
+  <div class="card">
+    <h2>Digital Safety</h2>
+
+    <div class="box">
+      <p>Be cautious if someone online:</p>
+      <ul>
+        <li>Asks you to keep secrets from adults</li>
+        <li>Requests personal photos or information</li>
+        <li>Pushes for private conversations quickly</li>
+      </ul>
+    </div>
+
+    <p class="small">
+      Trust your instincts online. If something feels off, it’s okay to step back and talk to someone you trust.
+    </p>
+
+    <img src="https://source.unsplash.com/900x500/?phone,aesthetic,soft" alt="phone safety">
+  </div>
+</section>
+
+<!-- WHAT TO DO -->
+<section id="help">
+  <div class="card">
+    <h2>What to do if something feels wrong</h2>
+
+    <div class="box">
+      <p>✔ Talk to a trusted adult or counselor</p>
+      <p>✔ Reach out to school or community support</p>
+      <p>✔ Contact official resources if needed</p>
+      <p>✔ You don’t have to handle it alone</p>
+    </div>
+
+    <p class="small">
+      Safety always matters more than staying silent.
+    </p>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section id="resources">
+  <div class="card">
+    <h2>Texas & Houston Resources</h2>
+
+    <div class="box">
+      <p><b>Texas Abuse Hotline (DFPS)</b></p>
+      <p>Statewide reporting and support services</p>
+    </div>
+
+    <div class="box">
+      <p><b>Childhelp National Hotline</b></p>
+      <p>24/7 support for concerns about child safety</p>
+    </div>
+
+    <div class="box">
+      <p><b>Houston Child Advocacy Centers</b></p>
+      <p>Local support and investigation resources for children and families</p>
+    </div>
+
+    <img src="https://source.unsplash.com/900x500/?houston,city,soft" alt="houston">
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="card">
+    <h2>Contact</h2>
+    <p>
+      If you have suggestions or would like to connect about this project:
+    </p>
+
+    <div class="box">
+      <p>Email: yourname@email.com</p>
+    </div>
+
+    <p class="small">
+      This project is educational and meant to make safety information more accessible in a calm, supportive format.
+    </p>
+  </div>
+</section>
+
+</body>
+</html>
