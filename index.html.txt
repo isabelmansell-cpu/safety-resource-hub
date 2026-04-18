@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SafePath</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#fdf8f5;color:#3a2f2a;overflow-x:hidden}
+
+nav{position:fixed;top:0;width:100%;z-index:999;padding:16px 48px;display:flex;justify-content:space-between;align-items:center;background:rgba(253,248,245,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(180,150,140,0.15)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:20px;color:#8b5e52;letter-spacing:0.04em}
+.nav-links{display:flex;gap:28px}
+.nav-links a{text-decoration:none;font-size:13px;font-weight:400;color:#7a6860;letter-spacing:0.06em;text-transform:uppercase;transition:color 0.3s}
+.nav-links a:hover{color:#c08b7c}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%, rgba(210,180,170,0.22) 0%, transparent 60%),radial-gradient(ellipse at 80% 20%, rgba(180,200,170,0.18) 0%, transparent 55%);pointer-events:none}
+.hero-inner{max-width:720px;text-align:center}
+.hero-eyebrow{font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#b08070;margin-bottom:28px;opacity:0;animation:fadeUp 1s 0.2s forwards}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(48px,7vw,88px);line-height:1.08;font-weight:600;color:#3a2f2a;margin-bottom:28px;opacity:0;animation:fadeUp 1s 0.4s forwards}
+.hero h1 em{font-style:italic;color:#c08b7c}
+.hero-sub{font-size:17px;line-height:1.85;color:#7a6860;max-width:540px;margin:0 auto 44px;opacity:0;animation:fadeUp 1s 0.6s forwards}
+.hero-cta{display:inline-block;padding:14px 36px;background:#c08b7c;color:#fff;text-decoration:none;border-radius:40px;font-size:14px;letter-spacing:0.06em;opacity:0;animation:fadeUp 1s 0.8s forwards;transition:background 0.3s,transform 0.3s}
+.hero-cta:hover{background:#a8705f;transform:translateY(-2px)}
+.scroll-line{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp 1s 1.2s forwards}
+.scroll-line span{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#b08070}
+.scroll-line-bar{width:1px;height:48px;background:linear-gradient(to bottom,#c08b7c,transparent);animation:scrollPulse 2s infinite}
+
+section.content-section{padding:120px 48px;max-width:1100px;margin:0 auto}
+.section-inner{opacity:0;transform:translateY(40px);transition:opacity 0.9s ease,transform 0.9s ease}
+.section-inner.visible{opacity:1;transform:translateY(0)}
+
+.section-tag{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#c08b7c;margin-bottom:20px;display:block}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(30px,4vw,46px);font-weight:600;line-height:1.2;margin-bottom:32px;color:#3a2f2a}
+.section-title em{font-style:italic;color:#8b7060}
+
+.prose p{font-size:16px;line-height:1.95;color:#5a4840;margin-bottom:24px}
+.prose p:last-child{margin-bottom:0}
+
+.divider{width:48px;height:2px;background:#d4a898;margin:48px 0}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.two-col.reverse{direction:rtl}
+.two-col.reverse > *{direction:ltr}
+
+.img-block{border-radius:20px;overflow:hidden;position:relative}
+.img-block img{width:100%;display:block;filter:saturate(0.9)}
+.img-caption{font-size:12px;color:#b08070;margin-top:10px;font-style:italic;text-align:center}
+
+.pull-quote{border-left:2px solid #d4a898;padding:24px 32px;margin:40px 0;background:rgba(212,168,152,0.08);border-radius:0 12px 12px 0}
+.pull-quote p{font-family:'Playfair Display',serif;font-size:19px;line-height:1.7;font-style:italic;color:#7a5548;margin:0}
+
+.resource-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:40px}
+.resource-card{background:#fff;border-radius:16px;padding:28px;border:1px solid rgba(180,150,140,0.2);transition:transform 0.3s,box-shadow 0.3s;position:relative;overflow:hidden}
+.resource-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c08b7c,#d4a898)}
+.resource-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(150,100,80,0.12)}
+.resource-card h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:#3a2f2a;margin-bottom:10px}
+.resource-card p{font-size:14px;line-height:1.7;color:#7a6860;margin-bottom:16px}
+.resource-card a{font-size:13px;color:#c08b7c;text-decoration:none;letter-spacing:0.04em;font-weight:500;border-bottom:1px solid #d4a898;padding-bottom:2px;transition:color 0.3s}
+.resource-card a:hover{color:#a8705f}
+
+.warning-list{margin-top:32px;display:flex;flex-direction:column;gap:20px}
+.warning-item{display:flex;gap:20px;align-items:flex-start;padding:24px;background:#fff;border-radius:14px;border:1px solid rgba(180,150,140,0.18)}
+.warning-dot{width:10px;height:10px;border-radius:50%;background:#c08b7c;flex-shrink:0;margin-top:6px}
+.warning-item p{font-size:15px;line-height:1.8;color:#5a4840;margin:0}
+
+footer{padding:60px 48px;text-align:center;border-top:1px solid rgba(180,150,140,0.2)}
+footer p{font-size:13px;color:#b08070;line-height:1.8}
+footer a{color:#c08b7c;text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scrollPulse{0%,100%{opacity:0.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.1)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">SafePath</span>
+  <div class="nav-links">
+    <a href="#why">Why</a>
+    <a href="#awareness">Warning Signs</a>
+    <a href="#digital">Digital Safety</a>
+    <a href="#help">What To Do</a>
+    <a href="#resources">Resources</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">A safety awareness resource for students</p>
+    <h1>You deserve to feel <em>safe.</em></h1>
+    <p class="hero-sub">SafePath is a calm, honest space designed to help you recognize warning signs, understand your digital rights, and know exactly where to turn if something doesn't feel right. No fear, no judgment.</p>
+    <a href="#why" class="hero-cta">Read more</a>
+  </div>
+  <div class="scroll-line">
+    <span>scroll</span>
+    <div class="scroll-line-bar"></div>
+  </div>
+</div>
+
+<section class="content-section" id="why">
+  <div class="section-inner">
+    <span class="section-tag">Why this exists</span>
+    <h2 class="section-title">This space was made <em>for you.</em></h2>
+    <div class="divider"></div>
+    <div class="two-col">
+      <div class="prose">
+        <p>A lot of safety resources are written for adults, by adults. They're dense with terminology, heavy with warnings, and easy to close before you've even finished the first paragraph. They assume you already know what you're looking for, and they speak in clinical language when what you actually need is something that feels human, approachable, and real.</p>
+        <p>SafePath was built differently. It was created with the understanding that most young people who find themselves in an uncomfortable or confusing situation don't always have the vocabulary to name what's happening. They might feel something is off without knowing why. They might wonder if what they're experiencing is "serious enough" to talk about. They might be scared of not being believed, scared of getting someone in trouble, or scared of what happens next if they speak up.</p>
+        <p>This page won't tell you what to feel. It won't rush you toward a decision or make you feel like you've done something wrong by not acting sooner. What it will do is offer you information that is clear, honest, and written with the understanding that you are capable of handling the truth when it's delivered with care.</p>
+        <div class="pull-quote">
+          <p>"You don't need certainty to deserve support. Confusion is a valid reason to reach out."</p>
+        </div>
+        <p>The topics covered here cover a spectrum. Some of what you read may feel very familiar. Some may feel completely unrelated to your life. Either way, knowing this information is never wasted. Understanding what healthy relationships look like, what appropriate adult behavior looks like, and where your digital boundaries should be will only ever help you, now and as you grow older.</p>
+      </div>
+      <div>
+        <div class="img-block">
+          <!--
+            PHOTO 1 - "Why this exists" section
+            Recommended: A soft, warm image of a girl looking out a window, or hands holding a journal/cup of tea.
+            Good Unsplash search terms: "girl window light soft", "journal morning light", "teenage girl calm"
+            To use your own photo: replace the src below with your image filename, e.g. src="photo1.jpg"
+            Make sure the image file is in the same folder as this HTML file on GitHub.
+          -->
+          <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="soft natural light through a window" loading="lazy"/>
+        </div>
+        <p class="img-caption">You are not alone in navigating these questions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="awareness">
+  <div class="section-inner">
+    <span class="section-tag">Recognizing what's happening</span>
+    <h2 class="section-title">Warning signs are often <em>quiet.</em></h2>
+    <div class="divider"></div>
+    <div class="prose">
+      <p>One of the most important things to understand about abuse is that it rarely announces itself dramatically. It doesn't always look the way movies portray it. More often, it creeps in slowly, disguised as affection, or rules, or "normal" behavior, until suddenly something shifts and you realize something has never felt right at all.</p>
+      <p>Warning signs of abuse in youth settings can be difficult to name because they often overlap with other experiences. Stress, depression, anxiety, family difficulties. These can share surface-level behaviors with signs of abuse, which is exactly why it matters to look for patterns rather than isolated incidents. A single bad day is not a warning sign. But a sustained change in someone's mood, habits, physical health, or relationships, especially when it can't be easily explained, often is.</p>
+    </div>
+
+    <div class="warning-list">
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Withdrawal from people or activities they used to enjoy.</strong> When someone starts pulling away from friends, family, sports, hobbies, or social events without a clear reason, it can signal that something difficult is happening that they don't yet feel safe discussing. This isn't about introversion. It's about a noticeable shift from who they used to be.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Unexplained changes in behavior, mood, or physical health.</strong> Increased anxiety, flinching at certain people's names, difficulty concentrating, unexplained injuries, dramatic swings in weight or appetite, disrupted sleep patterns, or a pervasive sadness that seems disconnected from any obvious cause are all worth paying attention to.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Fear or discomfort around specific people or environments.</strong> A young person who becomes visibly tense, avoidant, or upset around a particular adult, peer, or location deserves to have that discomfort taken seriously, even if they can't explain it themselves.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Inappropriate sexual knowledge or behavior for their age.</strong> When a child or teenager demonstrates understanding of sexual concepts or exhibits behaviors that are not age-appropriate, it is one of the most significant indicators that something needs immediate, professional attention.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Secrecy around relationships with adults or older peers.</strong> Healthy relationships between adults and minors don't require secrecy. If an adult in a young person's life is insisting on private communication, asking them to keep meetings or conversations hidden from parents, or expressing an unusual intensity of personal interest, this is a serious warning sign regardless of how kind or trusted that adult may appear.</p>
+      </div>
+      <div class="warning-item">
+        <div class="warning-dot"></div>
+        <p><strong>Unexplained gifts, money, or access to things beyond their means.</strong> A young person suddenly appearing with expensive items, large amounts of cash, or access to places and events without a clear explanation from parents can signal that someone is using material gifts to establish influence or control.</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:40px">
+      <p>If you're reading this and recognizing something, in yourself or in someone you care about, take a breath. Recognizing a warning sign is not the same as having all the answers. You don't need to have proof, you don't need to be certain, and you don't need to handle it alone. The next step is simply to reach out to someone you trust, or to one of the resources listed at the bottom of this page.</p>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="digital">
+  <div class="section-inner">
+    <span class="section-tag">Your online world</span>
+    <h2 class="section-title">Digital safety matters <em>just as much.</em></h2>
+    <div class="divider"></div>
+    <div class="two-col reverse">
+      <div class="prose">
+        <p>The internet is where a lot of us live our social lives, and that's not a bad thing. It's where we find community, express ourselves, build friendships, and explore who we are. But online spaces also create conditions where unhealthy or unsafe relationships can form in ways that are harder to recognize, harder to name, and much easier to minimize as "not real" or "not a big deal."</p>
+        <p>Online grooming is the process by which an adult builds trust with a young person, and often with their family, in order to create opportunities for abuse. It can happen on any platform: social media, gaming apps, group chats, comment sections, or messaging apps. It typically starts with what feels like genuine friendship. The person is attentive, complimentary, and understanding. They remember details you've shared. They check in on you. Over time, they may start to introduce inappropriate content, ask for photos, or encourage you to keep your relationship with them private.</p>
+        <div class="pull-quote">
+          <p>"Grooming rarely feels dangerous at first. That's what makes it so effective, and why it's so important to recognize the pattern."</p>
+        </div>
+        <p>There are specific behaviors that should always prompt you to pause and reconsider a digital relationship. Someone who immediately moves the conversation to a private platform, who asks detailed questions about your schedule or location, who asks for photos (even "innocent" ones), who offers gifts, money, or gaming credits in exchange for conversation, who expresses a romantic or sexual interest in you while positioning themselves as uniquely understanding of you, or who asks you to keep your conversations secret from the adults in your life.</p>
+        <p>It's also worth knowing that you are never at fault for a grooming situation. These individuals are skilled at making young people feel seen and special, and then using that connection to their advantage. Feeling like you should have known better is one of the most common responses, and it's one that is never accurate. The responsibility lies entirely with the adult who engaged in that behavior.</p>
+        <p>Protecting yourself digitally doesn't mean being afraid of the internet. It means keeping your privacy settings strong, being thoughtful about who you share personal information with, trusting your instincts when something feels off, and knowing that it is always okay to block, mute, or walk away from any conversation that makes you uncomfortable. No explanation or apology needed.</p>
+      </div>
+      <div>
+        <div class="img-block">
+          <!--
+            PHOTO 2 - "Digital Safety" section
+            Recommended: A soft, aesthetic photo of someone on their phone in warm lighting, or a phone on a desk with plants/candles nearby.
+            Good Unsplash search terms: "phone aesthetic warm light", "girl phone cozy", "phone flat lay soft"
+            To use your own photo: replace the src below with your image filename, e.g. src="photo2.jpg"
+            Make sure the image file is in the same folder as this HTML file on GitHub.
+          -->
+          <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80" alt="phone soft light" loading="lazy"/>
+        </div>
+        <p class="img-caption">Trust your instincts about online interactions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="help">
+  <div class="section-inner">
+    <span class="section-tag">You don't have to figure this out alone</span>
+    <h2 class="section-title">What to do when something <em>doesn't feel right.</em></h2>
+    <div class="divider"></div>
+    <div class="prose">
+      <p>The moment something feels wrong, even if you can't fully articulate why, is the moment it matters. You don't need to have experienced something overtly harmful. Discomfort is valid. Confusion is valid. A persistent feeling that something about a relationship or situation isn't quite right is worth taking seriously, even when part of you is tempted to dismiss it.</p>
+      <p>The hardest part for many young people is the fear of not being believed, or of causing trouble for someone who may be important to their family or community. This fear is understandable, and it's deeply unfair that it exists at all. But the truth is: trusted adults, counselors, and hotline advocates have heard every version of "I'm not sure if this is serious enough," and every single time, it is serious enough to talk about.</p>
+      <p>Here are some steps you can take, in no particular order. There is no single right way to navigate this, and you do not have to follow them in sequence.</p>
+
+      <div class="warning-list" style="margin-top:0">
+        <div class="warning-item">
+          <div class="warning-dot"></div>
+          <p><strong>Talk to someone you trust.</strong> This could be a parent, an older sibling, a teacher, a school counselor, a coach you trust, or any adult in your life who makes you feel safe and heard. You don't have to have a full picture of what's happening to start the conversation. "Something doesn't feel right and I don't know how to explain it" is a perfectly valid starting point.</p>
+        </div>
+        <div class="warning-item">
+          <div class="warning-dot"></div>
+          <p><strong>Document what you can, when you can.</strong> If you are able to do so safely, keep a record of concerning messages, interactions, or incidents. Screenshots, dates, and brief notes can be helpful if you later decide to report something. This is not required, and never delay seeking help just because you don't have documentation. Your words alone are enough.</p>
+        </div>
+        <div class="warning-item">
+          <div class="warning-dot"></div>
+          <p><strong>Contact a hotline if speaking to someone in person feels too difficult.</strong> The resources listed below are confidential and exist specifically for moments like this. You can call, text, or in some cases chat online. You can share as much or as little as you're comfortable with, and no one will push you to do anything you're not ready to do.</p>
+        </div>
+        <div class="warning-item">
+          <div class="warning-dot"></div>
+          <p><strong>Know that changing your mind is okay.</strong> You are allowed to reach out and then step back. You are allowed to share something and then decide you're not ready to move forward yet. The goal of these resources is to support you, not to pressure you into a process that doesn't feel right. Your pace matters.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:32px">If you are in immediate danger, please call 911. Your physical safety comes first, and there is no situation in which you should prioritize someone else's comfort over your own safety.</p>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="resources">
+  <div class="section-inner">
+    <span class="section-tag">Texas & Houston resources</span>
+    <h2 class="section-title">Real support, <em>right here.</em></h2>
+    <div class="divider"></div>
+    <div class="prose">
+      <p>These are real organizations with real people behind them, people who have chosen this work specifically because they want to help. Every resource listed here is either free, confidential, or both. You are never obligated to report anything you aren't ready to report. But knowing these resources exist means you'll have them when you need them.</p>
+    </div>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <h3>Texas Abuse Hotline (DFPS)</h3>
+        <p>The official Texas Department of Family and Protective Services reporting line. Available 24 hours a day, 7 days a week. Calls can be made anonymously. This is where you report child abuse or neglect occurring in Texas.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">1-800-252-5400</p>
+        <a href="https://www.txabusehotline.org" target="_blank" rel="noopener">txabusehotline.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Childhelp National Child Abuse Hotline</h3>
+        <p>A 24/7 confidential hotline staffed by professional crisis counselors. Accepts calls, texts, and online chats. Available in over 170 languages. No situation is too small or too confusing to discuss with them.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">1-800-422-4453</p>
+        <a href="https://www.childhelp.org/hotline" target="_blank" rel="noopener">childhelp.org/hotline</a>
+      </div>
+      <div class="resource-card">
+        <h3>Houston Area Women's Center</h3>
+        <p>Provides crisis intervention, counseling, legal advocacy, and shelter for survivors of sexual assault and domestic violence in the Houston area. Services are available regardless of gender.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">713-528-7273 (24hr hotline)</p>
+        <a href="https://www.hawc.org" target="_blank" rel="noopener">hawc.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Child Advocates of Houston</h3>
+        <p>A local Houston organization that provides trained volunteer advocates for children in the welfare system. Offers court-appointed advocacy and community support programs for youth who have experienced abuse.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">713-529-9165</p>
+        <a href="https://www.childadvocates.org" target="_blank" rel="noopener">childadvocates.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>The Children's Assessment Center (Houston)</h3>
+        <p>Houston's primary child abuse assessment center. Provides forensic interviews, medical evaluations, mental health services, and family advocacy, all at a single, child-centered location. No cost to families.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">713-986-3300</p>
+        <a href="https://www.cachouston.org" target="_blank" rel="noopener">cachouston.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>RAINN Online Hotline</h3>
+        <p>The nation's largest anti-sexual violence organization. Offers a confidential 24/7 online chat option if calling feels too difficult. Connects you with trained staff specialists and local resources in your area.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">1-800-656-4673</p>
+        <a href="https://www.rainn.org/get-help" target="_blank" rel="noopener">rainn.org/get-help</a>
+      </div>
+      <div class="resource-card">
+        <h3>Crisis Text Line</h3>
+        <p>If calling feels too hard, text HOME to 741741 from anywhere in the US. A trained crisis counselor will respond. Free, confidential, and available 24/7. You can talk about anything that is weighing on you.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">Text HOME to 741741</p>
+        <a href="https://www.crisistextline.org" target="_blank" rel="noopener">crisistextline.org</a>
+      </div>
+      <div class="resource-card">
+        <h3>Internet Crimes Against Children (ICAC)</h3>
+        <p>Texas-specific task force that investigates online exploitation and digital abuse of minors. If you've experienced inappropriate contact or exploitation online, this is the right place to report it.</p>
+        <p style="font-size:14px;color:#3a2f2a;font-weight:500;margin-bottom:8px">cybertipline.org</p>
+        <a href="https://www.missingkids.org/gethelpnow/cybertipline" target="_blank" rel="noopener">Report online exploitation</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:#8b5e52;margin-bottom:16px">SafePath</p>
+  <p>This is an educational awareness project created for students in Texas.<br>It is not a substitute for professional services, but it is a place to start.</p>
+  <p style="margin-top:16px;font-size:12px;opacity:0.7">If you are in immediate danger, call <strong>911</strong>.</p>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+},{threshold:0.1});
+document.querySelectorAll('.section-inner').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
